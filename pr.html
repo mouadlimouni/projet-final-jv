@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Galerie Accessible</title>
+  <style>
+    :root { --display-width:640px; --display-height:360px; }
+    body { font-family:system-ui; margin:1rem; line-height:1.4; }
+    #display {
+      width:var(--display-width); height:var(--display-height);
+      border:2px solid #333; background-size:cover; background-position:center;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:600; margin-bottom:1rem;
+    }
+    .gallery {
+      display:flex; gap:.5rem; flex-wrap:wrap; max-width:var(--display-width);
+    }
+    figure.thumb {
+      margin:0; width:120px; cursor:pointer; border:2px solid transparent;
+      padding:.25rem; display:flex; flex-direction:column; align-items:center;
+      background:#fafafa;
+    }
+    figure.thumb:focus { outline:3px solid #1a73e8; border-radius:4px; }
+    figure.thumb img { max-width:100%; display:block; }
+    figcaption { font-size:.85rem; margin-top:.25rem; text-align:center; }
+    @media(max-width:700px) {
+      :root { --display-width:100%; --display-height:240px; }
+      figure.thumb { width:30%; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Galerie interactive</h1>
+
+  <div id="display" aria-live="polite">Hover or focus a thumbnail</div>
+
+  <section class="gallery" aria-label="Galerie d'images">
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" alt="Plage au coucher du soleil"><figcaption>Plage</figcaption></figure>
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400" alt="Forêt dense"><figcaption>Forêt</figcaption></figure>
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=400" alt="Montagne enneigée"><figcaption>Montagne</figcaption></figure>
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400" alt="Ville la nuit"><figcaption>Ville</figcaption></figure>
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400" alt="Portrait sourire"><figcaption>Portrait</figcaption></figure>
+    <figure class="thumb"><img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400" alt="Fleur colorée"><figcaption>Fleur</figcaption></figure>
+  </section>
+
+<script>
+function initGallery() {
+  const display = document.getElementById("display");
+  const figures = document.querySelectorAll("figure.thumb");
+
+  for (let i = 0; i < figures.length; i++) {
+    const fig = figures[i];
+    if (!fig.hasAttribute("tabindex")) fig.setAttribute("tabindex", "0");
+    const img = fig.querySelector("img");
+
+    const activate = () => {
+      display.textContent = img.alt || "";
+      display.style.backgroundImage = `url(${img.src})`;
+    };
+
+    const deactivate = () => {
+      display.textContent = "Hover or focus a thumbnail";
+      display.style.backgroundImage = "";
+    };
+
+    fig.addEventListener("mouseover", activate);
+    fig.addEventListener("mouseleave", deactivate);
+    fig.addEventListener("focus", activate);
+    fig.addEventListener("blur", deactivate);
+    fig.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault(); activate();
+      }
+    });
+  }
+}
+window.addEventListener("load", initGallery);
+</script>
+</body>
+</html>
